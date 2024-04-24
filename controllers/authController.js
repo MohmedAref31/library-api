@@ -15,8 +15,8 @@ export const login = asyncHandler(async (req, res, next) => {
 
   const user = await User.findOne({ email: email });
   if (!user) return next(new ApiError("email or password is incorrect", 401));
-  const comparePass = bcrypt.compare(password, user.password);
-
+  const comparePass = await bcrypt.compare(password, user.password);
+  console.log(comparePass)
   if (!comparePass)
     return next(new ApiError("email or password is incorrect", 401));
  

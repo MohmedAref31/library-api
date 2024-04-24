@@ -25,7 +25,7 @@ app.use(compression());
 app.use(express.json());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({policy:"cross-origin"}));
-app.use(morgan(process.env.MODE === "development" ? "dev": "common"));
+app.use(morgan(process.env.MODE === "dev" ? "dev": "common"));
 app.use(bodyParser.json({limit:"10mb", extended:true}));
 app.use(bodyParser.urlencoded({limit:"10mb", extended:true}));
 app.use(cors());
