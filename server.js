@@ -4,10 +4,13 @@ import helmet from "helmet";
 import morgan from "morgan";
 import compression from "compression";
 import bodyParser from "body-parser";
+import mongoose from "mongoose"
 import cors from "cors"
 import path from "path";
 import { fileURLToPath } from "url";
-import upload from "./storage/upload.js";
+import resFormat from "./middlewares/resFormat.js";
+import errorHandler from "./middlewares/errorHandler.js";
+import appRoutes from "./routes/index.js"
 dotenv.config()
 
 const __filename = fileURLToPath(import.meta.url);
@@ -16,7 +19,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = process.env.PORT || 5000;
 
-
+app.use(resFormat)
 app.use(compression());
 app.use(express.json());
 app.use(helmet());
@@ -26,16 +29,15 @@ app.use(bodyParser.json({limit:"10mb", extended:true}));
 app.use(bodyParser.urlencoded({limit:"10mb", extended:true}));
 app.use(cors());
 
-          
+// mount routes // 
+app.use('/api/v1',appRoutes)
 
-app.post("/upload", upload.single("image"), (req,res)=>{
-    console.log(req.file)
-    res.send("done")
-})
-
-
+app.use(errorHandler)
 
 app.listen(port,()=>{
     console.log("app listening on port " + port);
-})
+    mongoose.connect(process.env.LOCAL_DB_URI)
+        .then(()=>console.log("DB connected!!!"))
+        .catch(e=>console.log(`DB error: ${e}`))   
+}) 
 

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import hashPassword from "../utiles/hashPassword.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -16,17 +17,17 @@ const userSchema = new mongoose.Schema(
       trim: true,
       maxLength: 500,
     },
-    password:{
-        type: String,
-        minLength:6,
-        maxLength:32,
-        trim: true,
+    password: {
+      type: String,
+      minLength: 6,
+      maxLength: 32,
+      trim: true,
     },
     phone: String,
     birthDate: Date,
     role: {
       type: String,
-      enum: ["user", "admin"],
+      enum: ["user", "admin", "author"],
       default: "user",
     },
     isActive: {
@@ -38,6 +39,17 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+userSchema.pre("save", async function (next) {
+  const user = this;
+  if (!user.isModified("password")) return next();
+  try {
+    user.password = await hashPassword(user.password);
+  } catch (error) {
+    next(error);
+  }
+  next();
+});
 
 const User = mongoose.model("User", userSchema);
 
