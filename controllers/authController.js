@@ -23,7 +23,7 @@ export const login = asyncHandler(async (req, res, next) => {
   const token = generateToken({_id:user._id, role:user.role})
   res.cookie("access_token",token, {
     httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24 
+    maxAge: 1000 * 60 * 60 * 24 * 7
   })
   res.jsonSuccess({user, token});
 });
