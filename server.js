@@ -18,6 +18,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 5000;
+const mongoUri = process.env.MODE === "dev"?process.env.LOCAL_DB_URI : process.env.DB_URI;
 
 app.use(resFormat)
 app.use(compression());
@@ -36,7 +37,7 @@ app.use(errorHandler)
 
 app.listen(port,()=>{
     console.log("app listening on port " + port);
-    mongoose.connect(process.env.LOCAL_DB_URI)
+    mongoose.connect(mongoUri)
         .then(()=>console.log("DB connected!!!"))
         .catch(e=>console.log(`DB error: ${e}`))   
 }) 
